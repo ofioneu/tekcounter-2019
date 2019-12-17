@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>grafico</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script type = "text/javascript" src = "//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js" ></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+</head>
+<body>
+	<form action="/readdb" method="POST" >
+		<dl>
+			{{ form.csrf_token }}
+			{{ form.data_inicio.label }}
+			{{ form.data_inicio }}
+			{{ form.data_fim.label }}
+			{{ form.data_fim }}
+			{{ form.hora_inicio.label }}
+			{{ form.hora_inicio }}
+			{{ form.hora_final.label }}
+			{{ form.hora_final }}
+		</dl>
+      <p>
+		  {{ form.submit() }}
+	  </p>
+	 </form>
+               
+    <script>
+
+        var socket = io.connect('http://' + document.domain + ':' + location.port);            
+      socket.on('connect',function() { 
+		  socket.emit('potsoma2', {status: 'conectado'});
+		  socket.on('potsoma2', function(pot){
+          console.log(pot)  
+      
+       Highcharts.chart('container', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'CONSUMO POR DATA'
+    },
+    subtitle: {
+        text: 'TEKCOUNTER.DDNS.NET'
+    },
+    xAxis: {
+        categories: [
+            'Consumo',
+            'tensão',
+            'corrente'
+                       
+        ],
+        crosshair: true
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'WATTS (W)'
+        }
+    },
+    tooltip: {
+        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y:.1f} W</b></td></tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+    },
+    plotOptions: {
+        column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+        }
+    },
+    series: [{
+        name: 'W',
+        data: [pot]
+    },{
+        name:'V',
+        data:[2]
+    },{
+        name:'A',
+        data:[10]
+    }]
+});
+      })});  
+
+    </script>
+	</div id= "volta-index">
+         <a href="/">Realtime</a>
+       <div>
+ 
+    </body>
+
+</html>

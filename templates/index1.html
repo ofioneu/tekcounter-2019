@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+<script type = "text/javascript" src = "//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js" ></script>
+
+
+    <title>voltimetro</title>
+</head>
+<body>
+
+    <div id="container" style="height: 400px; min-width: 310px"></div>
+    <script>
+
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('connect', function(teste) {
+        socket.emit('menssagem', {status: 'conectado'});
+   });
+
+
+
+        // Create the chart
+        /*socket.on('menssagem2',function(pot) {
+					pot=parseFloat(pot)
+					console.log(pot) */
+
+Highcharts.chart('container', {
+	
+    chart: {
+		
+        type: 'spline',
+        animation: Highcharts.svg, // don't animate in old IE
+        marginRight: 10,
+        events: {
+			
+            load: function () {
+							
+                // set up the updating of the chart each second
+                   var series = this.series[0];
+                                 
+                   var x = (new Date()).getTime(), // current time                   
+                       y = Math.random();
+                   series.addPoint([x, y], true, true);
+                
+                
+            }
+        }
+    },
+
+    time: {
+        useUTC: false
+    },
+
+    title: {
+        text: 'Live random data'
+    },
+    xAxis: {
+        type: 'datetime',
+        tickPixelInterval: 150
+    },
+    yAxis: {
+        title: {
+            text: 'Value'
+        },
+        plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+        }]
+    },
+    tooltip: {
+        headerFormat: '<b>{series.name}</b><br/>',
+        pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
+    },
+    legend: {
+        enabled: false
+    },
+    exporting: {
+        enabled: false
+    },
+    
+    series: [{
+		
+        name: 'Random data',
+        data: (function () {
+            // generate an array of random data
+            var data = [],
+                time = (new Date()).getTime(),
+                i;
+
+            for (i = -19; i <= 0; i += 1) {
+                data.push({
+                    x: time + i * 1000,
+                    y: Math.random()
+                });
+            }
+            return data;
+        }())
+        
+    }]
+
+
+});
+  
+ //}); // termina o socket  
+        </script>
+        <div id="valor">
+			
+        </div id= "somatoria">
+         <a href="/readdb">consumo por data</a>
+       <div>
+       
+       </div>	
+</body>
+</html>
